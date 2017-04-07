@@ -98,7 +98,7 @@ def burst_detect(time_lists):
             #     time_list.insert(0,0)
 
 
-            # print('len',time_list[:10])
+            print('len',ind,time_list[:10])
             #バースト検知
             burst_list = pybursts.pybursts.kleinberg(sorted(set(time_list)),s=2,gamma=1.0)
 
@@ -205,12 +205,12 @@ if __name__ == '__main__':
         obj = pickle.load(f, encoding="bytes")
 
     day_set = set([(x.year,x.month,x.day) for x in obj ])
-    print(len(obj))
+
     time_lists = {}
     for day in day_set:
-        # print(day,datetime.date(day[0],day[1],day[2] ))
+
         time_list = [x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == datetime.date(day[0],day[1],day[2] ) ]
-        cur_t = 0
+        cur_t = -1
 
         for i,t in enumerate(time_list):
             if cur_t == t:
@@ -221,8 +221,6 @@ if __name__ == '__main__':
 
         time_lists[day] = time_list
 
-    # for k,v in time_lists.items():
-    #     print(k,len(v))
 
     # for time_list in time_lists:
     burst_result = m_burst_detect(time_lists,3)
