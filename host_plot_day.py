@@ -158,7 +158,7 @@ if __name__ == "__main__":
 
         #総計データのプロット
         x, y = create_xy("host_dump/"+host_name+".dump",get_date)
-        plt.plot(x, y, "--", label='all', color="black", lw='3')
+        plt.plot(x, y, "--", label='all', color="black", lw=3)
 
 
         plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],rotation=90)
