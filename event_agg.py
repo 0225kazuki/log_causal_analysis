@@ -5,10 +5,17 @@ import glob
 
 '''
 event別dumpファイルをhostごとに集約
+python event_agg.py prefix
+
+prefix以下が、
+prefix/0000-0499/hoge.dump
+
 '''
 
+PREFIX = sys.argv[1]
+
 # files = glob.glob('dump_files/0000-0499/*_tokyo-dc-rm.dump') # ワイルドカードが使用可能
-files = glob.glob('dump_files/*-*/*') # ワイルドカードが使用可能
+files = glob.glob('{0}/*-*/*'.format(PREFIX)) # ワイルドカードが使用可能
 
 host_list = []
 for fi in files:
@@ -27,7 +34,7 @@ print(set(host_list),len(set(host_list)))
 for host in set(host_list):
 
     # パス内の全ての"指定パス+ファイル名"と"指定パス+ディレクトリ名"を要素とするリストを返す
-    files = glob.glob('dump_files/*-*/*_{0}.dump'.format(host)) # ワイルドカードが使用可能
+    files = glob.glob('{0}/*-*/*_{1}.dump'.format(PREFIX,host)) # ワイルドカードが使用可能
 
     all_event = []
 
