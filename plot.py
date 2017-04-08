@@ -38,8 +38,8 @@ y = [row[1] for row in y]
 
 print(y)
 
-if max(y) < 1000:
-    exit()
+# if max(y) < 1000:
+#     exit()
 
 # データをセット
 # fig = plt.figure(figsize=(30,10))
@@ -49,13 +49,15 @@ if max(y) < 1000:
 # データをセット
 fig = plt.figure(figsize=(30,10))
 # ax = fig.add_subplot(111)
-fig.subplots_adjust(left=0.03,right=0.999)
+fig.subplots_adjust(left=0.03,right=0.995)
 
 plt.bar(x, y, color='b',edgecolor='b')
 
-xticks_label = [datetime.date(2012,i,1)for i in range(1,13)] + [datetime.date(2013,i,1) for i in range(1,4)]
+xticks_label = [datetime.date(2012,i,1)for i in range(1,13)] + [datetime.date(2013,i,1) for i in range(1,5)]
 plt.xticks(xticks_label,xticks_label)
 
+print(xticks_label[-1])
+plt.xlim(xticks_label[0],xticks_label[-1])
 plt.grid(b=True, which='major',color='black',lw='1')
 # plt.grid(b=True, which='minor',color='gray')
 
@@ -66,7 +68,7 @@ plt.grid(b=True, which='major',color='black',lw='1')
 # ax.xaxis.set_major_formatter(daysFmt)
 # fig.autofmt_xdate()
 
-
+print(DUMP_NAME.split('/')[-1].split('.')[0]+'.png')
 plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'.png')
 
 
