@@ -1,5 +1,4 @@
 import pickle
-import sqlite3
 import datetime
 import sys
 import glob

@@ -38,8 +38,8 @@ y = [row[1] for row in y]
 
 print(y)
 
-# if max(y) < 1000:
-#     exit()
+if max(y) < 1000:
+    exit()
 
 # データをセット
 # fig = plt.figure(figsize=(30,10))

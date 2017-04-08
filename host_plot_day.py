@@ -8,7 +8,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+'''
+特定の日の、ID別プロット
+
+no option:
+python host_plot_day.py tokyo-dc-rm_df.dump 20120101 prefix
+
+./prefix/0000-0499/イベント別データ
+のファイル構造から、自動で、入力日の上位10件の発生イベントを拾ってきてプロットする
+
+option: a
+python host_plot_day.py a tokyo-dc-rm_df.dump burst_result prefix"
+
+burst_resultからバーストが検知された日を抽出し、
+./prefix/0000-0499/イベント別データ
+のファイル構造から、自動で、入力日の上位10件の発生イベントを拾ってきて、全日プロットする
+
+'''
+
+
 def create_xy(dump_name,get_date):
+    #特定日の累積和プロット用の階段処理してあるx, yを生成
     obj = open_dump(dump_name)
 
     plot_year = int(get_date[:4])
@@ -81,8 +101,8 @@ def burst2get_dates(burst_file):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print("usage:\npython host_plot_day.py tokyo-dc-rm_df.dump 20120101 burst_result")
-        print("python host_plot_day.py a tokyo-dc-rm_df.dump burst_file burst_result")
+        print("usage:\npython host_plot_day.py tokyo-dc-rm_df.dump 20120101 prefix")
+        print("python host_plot_day.py a tokyo-dc-rm_df.dump burst_result.txt prefix")
         exit()
 
     if sys.argv[1] == 'a':
@@ -134,6 +154,12 @@ if __name__ == "__main__":
             print(idd,y[-1])
 
             plt.plot(x, y,label=idd,color=colors[cnt], lw='3')
+
+
+        #総計データのプロット
+        x, y = create_xy("host_dump/"+host_name+".dump",get_date)
+        plt.plot(x, y, "--", label='all', color="black", lw='3')
+
 
         plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],rotation=90)
         plt.xlim(0,86400)
