@@ -9,7 +9,15 @@ import numpy as np
 
 '''
 hostの全集計dfのdump生成
+
+python host_pandas.py prefix
+
+* prefix/0000-0499
+
 '''
+
+PREFIX = sys.argv[1]
+
 def print_full(x):
     pd.set_option('display.max_rows', len(x))
     pd.set_option('display.max_columns', len(x.columns))
@@ -19,7 +27,7 @@ def print_full(x):
 
 
 # files = glob.glob('dump_files/0000-0499/*_tokyo-dc-rm.dump') # ワイルドカードが使用可能
-files = glob.glob('dumps_nofilter/*-*/*') # ワイルドカードが使用可能
+files = glob.glob('{0}/*-*/*'.format(PREFIX)) # ワイルドカードが使用可能
 
 host_list = []
 for fi in files:
@@ -29,7 +37,7 @@ for fi in files:
 for host in set(host_list):
 
     # パス内の全ての"指定パス+ファイル名"と"指定パス+ディレクトリ名"を要素とするリストを返す
-    files = glob.glob('dumps_nofilter/*-*/*_{0}.dump'.format(host)) # ワイルドカードが使用可能
+    files = glob.glob('{0}/*-*/*_{1}.dump'.format(PREFIX,host)) # ワイルドカードが使用可能
 
 
     df_tmp = pd.DataFrame(index=pd.date_range('20120101','20130331'), columns=np.arange(1789))
