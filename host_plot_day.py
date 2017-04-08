@@ -153,7 +153,7 @@ if __name__ == "__main__":
             x,y = create_xy(id_host_path,get_date)
             print(idd,y[-1])
 
-            plt.plot(x, y,label=idd,color=colors[cnt], lw='3')
+            plt.plot(x, y,label=idd,color=colors[cnt], lw=3)
 
 
         #総計データのプロット
