@@ -92,10 +92,6 @@ def burst2get_dates(burst_file):
 
 # 日毎に前後60secで発生しているバースト結果を検索
 def search_burst(day_series):
-    """
-
-    :type day_series: np.Series
-    """
     for i, j in day_series.iteritems():
         print('\n', i)
         for cur in j:
