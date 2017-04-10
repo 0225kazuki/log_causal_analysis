@@ -4,6 +4,7 @@
 '''
 dumpから日毎の累積度数をプロット
 
+
 python plot.py xxxx.dump
 '''
 
