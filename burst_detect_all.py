@@ -13,8 +13,6 @@ import re
 import sys
 import time
 import numpy as np
-import sqlite3
-import matplotlib.pyplot as plt
 import pybursts
 import math
 from concurrent import futures
@@ -98,7 +96,7 @@ def burst_detect(time_lists):
             #     time_list.insert(0,0)
 
 
-            #print('len',ind,time_list[:10])        
+            #print('len',ind,time_list[:10])
             #バースト検知
             burst_list = pybursts.pybursts.kleinberg(sorted(set(time_list)),s=2,gamma=1.0)
 

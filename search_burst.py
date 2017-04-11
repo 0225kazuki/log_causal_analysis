@@ -125,16 +125,12 @@ def search_burst2(day_series):
 
 
 if __name__ == "__main__":
-    """
-     :type burst_df: pd.DataFrame
-     """
     burst_df = open_dump("./nofilter/burst_df.dump")
     ind = burst_df.index
     result = collections.defaultdict(lambda: 0)
     for ii in ind:
         tmp = burst_df.loc[ii]
         tmp2 = tmp.dropna()
-        # print(ii)
         returns = search_burst2(tmp2)
         for i, j in returns.items():
             if result[i] == 0:
