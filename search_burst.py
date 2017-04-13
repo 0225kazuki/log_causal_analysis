@@ -4,6 +4,7 @@ import datetime
 import pickle
 import numpy as np
 import pandas as pd
+import sys
 
 '''
 search burst.py
@@ -125,7 +126,7 @@ def search_burst2(day_series):
 
 
 if __name__ == "__main__":
-    burst_df = open_dump("./nofilter/burst_df.dump")
+    burst_df = open_dump(sys.argv[1])
     ind = burst_df.index
     result = collections.defaultdict(lambda: 0)
     for ii in ind:
