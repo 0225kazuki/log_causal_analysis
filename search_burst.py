@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import sys
 import matplotlib.pyplot as plt
-import seaborn as sns
+# import seaborn as sns
 
 
 def print_full(x):
@@ -81,7 +81,10 @@ def search_burst(burst_df):
 
 def calc_jaccard(AandB, A, B):
     AorB = A + B - AandB
-    return AandB / AorB
+    if AorB == 0:
+        return 1.0
+    else:
+        return AandB / AorB
 
 
 def calc_simpson(AandB, A, B):
