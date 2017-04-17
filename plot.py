@@ -9,15 +9,10 @@ python plot.py xxxx.dump
 '''
 
 import collections
-import pprint
-import re
 import sys
 import numpy as np
-import sqlite3
 import matplotlib.pyplot as plt
 import pybursts
-import math
-import time
 import datetime
 import matplotlib.dates as mdates
 import pickle
