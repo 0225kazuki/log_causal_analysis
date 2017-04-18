@@ -132,6 +132,9 @@ def host_burst_cnt(burst_df):
 
 def co_plot(cur_event, co_prob_result):
 
+    if len(co_prob_result) == 0 :
+        return 0
+    
     fig = plt.figure()
 
     plt.style.use('ggplot')
