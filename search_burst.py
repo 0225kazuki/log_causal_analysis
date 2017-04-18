@@ -10,9 +10,9 @@ import pickle
 import numpy as np
 import pandas as pd
 import sys
+import matplotlib
 import matplotlib.pyplot as plt
 # import seaborn as sns
-
 
 def print_full(x):
     pd.set_option('display.max_rows', len(x))
@@ -132,37 +132,32 @@ def host_burst_cnt(burst_df):
 
 def co_plot(cur_event, co_prob_result):
 
-    x = np.array(co_prob_result["x"])
-    y_jaccard = np.array(co_prob_result["y_jaccard"] * (10 ** 5))
-    y_simpson = co_prob_result["y_simpson"]
+    fig = plt.figure()
 
-    # x = [1,2,4,5,6]
-    # y_jaccard = [10,20,40,60,90]
-
-
-    fig = plt.figure(figsize=(12,12))
-    ax = fig.add_subplot(111)
+    plt.style.use('ggplot')
     # fig.subplots_adjust(left=0.03,right=0.995)
 
-    print(x[:10],y_jaccard[:10])
-    plt.scatter(list(x), list(y_jaccard))
+    co_prob_result['y_jaccard'] = co_prob_result['y_jaccard'] * (10 ** 5 )
+    co_prob_result.plot(kind='scatter',x='x', y='y_jaccard', figsize=(9,9))
+
+    # print(x[:10],y_jaccard[:10])
+
     plt.title(cur_event, fontsize='20')
-    # sns.regplot(list(x), list(y_jaccard), ax, fit_reg=False)
 
     plt.xscale("log")
     plt.yscale("log")
 
-    # xticks_label = [datetime.date(2012,i,1)for i in range(1,13)] + [datetime.date(2013,i,1) for i in range(1,5)]
-    # plt.xticks(xticks_label,xticks_label)
-    plt.yticks([10 ** i for i in range(1,6)], ['0.0001','0.001','0.01','0.1','1.0'],fontsize='20')
+    plt.xticks(fontsize='15')
+    # plt.xlabel(fontsize='15')
+    plt.yticks([10 ** i for i in range(1,6)],
+               ['$1.0^{-4}$','$1.0^{-3}$','$1.0^{-2}$','$1.0^{-1}$','1.0'],
+               fontsize='15')
+    # plt.ylabel(fontsize='15')
 
-    # plt.xlim(xticks_label[0],xticks_label[-1])
-    # plt.ylim(1. ** (-6), 1.)
-    plt.grid()
-    # plt.grid(b=True, which='major',color='black',lw='1')
-    # plt.grid(b=True, which='minor',color='gray')
+    plt.ylim(1., 10. ** 5 + 10 ** 4)
+    plt.grid(b=True, which='major',lw='1', color='gray')
+    plt.grid(b=True, which='minor', linestyle='--', color='white')
 
-    # plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'.png')
     plt.savefig('{0}_jaccard.png'.format(cur_event))
 
 
@@ -182,11 +177,11 @@ if __name__ == "__main__":
 
             co_prob_result = calc_co_prob(host_bursts, cur_event, co_result)
 
-            # with open('search_burst_test_xy','wb') as f:
-            #     pickle.dump(co_prob_result,f)
-
+            print(cur_event)
+            print_full(co_prob_result)
             co_plot(cur_event,co_prob_result)
-            # exit()
+
     else:
         co_prob_result = open_dump(sys.argv[2])
+        print_full(co_prob_result)
         co_plot('cur_event',co_prob_result)
