@@ -206,7 +206,7 @@ def co_plot_all(co_prob_result):
         # co_prob_result.plot(kind='scatter', figsize=(9,9), subplots= True, layout=(1,2), x='x', y ='y_jaccard')
 
         # plt.xscale("log")
-        # plt.yscale("log")
+        plt.yscale("log")
 
         plt.xticks(fontsize='15')
         plt.yticks([10 ** i for i in range(1,6)],
@@ -214,8 +214,8 @@ def co_plot_all(co_prob_result):
                    fontsize='15')
         # plt.yticks(fontsize='15')
 
-        # plt.ylim(1., 10. ** 5 + 10 ** 4)
-        plt.ylim(-1000, 10. ** 5 + 10 ** 4)
+        plt.ylim(1., 10. ** 5 + 10 ** 4)
+        # plt.ylim(-1000, 10. ** 5 + 10 ** 4)
         plt.grid(b=True, which='major',lw='1', color='gray')
         plt.grid(b=True, which='minor', linestyle='--', color='white')
         plot_cnt += 1
