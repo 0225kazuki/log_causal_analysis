@@ -26,8 +26,9 @@
     引数で受けたdumpの通年のヒートマップをプロット
 
 ## plot.py
-    arg: hoge.dump
+    arg: hoge.dump [plotburst]
     dumpの通年の発生件数を日単位で集計してプロット
+    plotburst = 1 でバースト検知日のプロットも行う
 
 ## plot\_day.py
     arg: hoge.dump 20120101
