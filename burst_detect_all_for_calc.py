@@ -221,7 +221,7 @@ if __name__ == '__main__':
         obj = pickle.load(f,  encoding="bytes")
 
 
-    # start = time.time()
+    start = time.time()
     day_set = set([(x.year, x.month, x.day) for x in obj])
 
     print(len(obj))
@@ -273,9 +273,9 @@ if __name__ == '__main__':
     # exit()
     burst_result = m_burst_detect(time_lists, 4)
 
-    # end = time.time()
-    # print(end-start)
-    for row in burst_result:
-        print(row[0])
-        for row2 in row[1]:
-            print('\t', row2)
+    end = time.time()
+    print(end-start)
+    # for row in burst_result:
+    #     print(row[0])
+    #     for row2 in row[1]:
+    #         print('\t', row2)
