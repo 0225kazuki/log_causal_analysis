@@ -114,7 +114,7 @@ def calc_co_prob_all(host_bursts, co_burst_results):
             if {cur_event, co_event} in event_set:
                 continue
             if co_burst_results[co_event][cur_event] > co_cnt: #もし関連event側からみて&が多かったら入れ替え
-                co_cnt = co_burst_results[co_event]
+                co_cnt = co_burst_results[co_event][cur_event]
             # else:
             event_set.append({cur_event, co_event})
             co_all = host_bursts[co_event]
