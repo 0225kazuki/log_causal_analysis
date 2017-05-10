@@ -271,7 +271,7 @@ if __name__ == '__main__':
         # time_lists[day] = sorted(list(set(new_time_list)))
     # print(new_time_lists)
     # exit()
-    burst_result = m_burst_detect(time_lists, 4)
+    burst_result = m_burst_detect(time_lists, 2)
 
     end = time.time()
     print(end-start)

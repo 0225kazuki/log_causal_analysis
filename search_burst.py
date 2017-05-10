@@ -115,21 +115,21 @@ def calc_co_prob_all(host_bursts, co_burst_results):
                 continue
             if co_burst_results[co_event][cur_event] > co_cnt: #もし関連event側からみて&が多かったら入れ替え
                 co_cnt = co_burst_results[co_event]
-            else:
-                event_set.append({cur_event, co_event})
-                co_all = host_bursts[co_event]
+            # else:
+            event_set.append({cur_event, co_event})
+            co_all = host_bursts[co_event]
 
-                new_line = pd.Series(index=['EvPair', 'x', 'y_jaccard', 'y_simpson'])
+            new_line = pd.Series(index=['EvPair', 'x', 'y_jaccard', 'y_simpson'])
 
-                new_line['EvPair'] = (cur_event, co_event)
-                new_line['x'] = co_all + cur_all - co_cnt
-                new_line['y_jaccard'] = calc_jaccard(co_cnt, cur_all, co_all)
-                new_line['y_simpson'] = calc_simpson(co_cnt, cur_all, co_all)
+            new_line['EvPair'] = (cur_event, co_event)
+            new_line['x'] = co_all + cur_all - co_cnt
+            new_line['y_jaccard'] = calc_jaccard(co_cnt, cur_all, co_all)
+            new_line['y_simpson'] = calc_simpson(co_cnt, cur_all, co_all)
 
-                if new_line['y_jaccard'] > 1 or new_line['y_simpson'] > 1:
-                    print(new_line, co_all, cur_all, co_cnt)
+            if new_line['y_jaccard'] > 1 or new_line['y_simpson'] > 1:
+                print(new_line, co_all, cur_all, co_cnt)
 
-                co_prob_result = co_prob_result.append(new_line, ignore_index=True)
+            co_prob_result = co_prob_result.append(new_line, ignore_index=True)
 
     return co_prob_result
 
@@ -221,6 +221,47 @@ def co_plot_all(co_prob_result):
         plot_cnt += 1
 
         plt.savefig('{0}_all.png'.format(kind))
+
+
+def co_plot_all_fp(co_prob_result):
+    if len(co_prob_result) == 0 :
+        return 0
+
+    plot_cnt = 1
+    for kind in ['jaccard','simpson']:
+
+        fig = plt.figure(figsize=(10,6))
+        ax = fig.add_subplot(111)
+        fig.subplots_adjust(top=0.95, bottom=0.15, left=0.15)
+
+        co_prob_result['y_{0}'.format(kind)] = co_prob_result['y_{0}'.format(kind)] * (10 ** 5 )
+
+        x=co_prob_result['x'].values
+        y=co_prob_result['y_{0}'.format(kind)].values
+
+        plt.scatter(x,y, marker='.', c=None)
+
+        plt.yscale("log")
+
+        plt.xticks(fontsize='18')
+        plt.yticks([10 ** i for i in range(1,6)],
+                   ['$1.0^{-4}$','$1.0^{-3}$','$1.0^{-2}$','$1.0^{-1}$','1.0'],
+                   fontsize='25')
+
+        plt.ylim(1., 10. ** 5 + 10 ** 4)
+        plt.grid()
+
+        plt.xlabel(r'$|A \cup B|$', fontsize='23')
+        ax.xaxis.set_label_coords(0.5, -0.13)
+        if plot_cnt==1:
+            ax.set_ylabel(r'$J(A,B)$', fontsize='23')
+        else:
+            ax.set_ylabel(r'$S(A,B)$', fontsize='23')
+
+        ax.yaxis.set_label_coords(-0.15, 0.5)
+        plt.savefig('{0}_nofilter.eps'.format(kind))
+
+        plot_cnt += 1
 
 
 if __name__ == "__main__":

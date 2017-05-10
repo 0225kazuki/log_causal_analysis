@@ -118,6 +118,98 @@ def plot_day(DUMP_NAME, DATE):
 
     plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.png')
 
+def plot_day_fp(DUMP_NAME, DATE):
+
+    with open(DUMP_NAME,"rb") as f:
+        obj = pickle.load(f, encoding="bytes")
+
+    plot_year = int(DATE[:4])
+    plot_month = int(DATE[4:6])
+    plot_day = int(DATE[6:8])
+
+    plot_date = datetime.date(plot_year,plot_month,plot_day)
+    plot_data = [row for row in obj if row.date() == plot_date]
+
+    plot_data = [row.time() for row in obj if row.date() == plot_date]
+    # print(plot_data[0:50])
+    plot_data_coll = collections.Counter(plot_data)
+
+    x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
+    y = [0]
+    for row in sorted(plot_data_coll.items(),key=lambda z:z[0]):
+        y.append(row[1]+y[-1])
+    y = y[1:]
+
+    # 階段状にする処理
+    x = np.sort(np.append(x, x))[1:]
+    x = np.insert(x, 0, x[0])
+    x = np.append(x, 86399)
+
+    tmp = []
+    for row in y:
+        tmp.append(row)
+        tmp.append(row)
+
+    y = tmp[:-1]
+    y = [0] + y + [y[-1]]
+
+
+    # データをセット
+    fig = plt.figure(figsize=(10,6))
+    #default left : 0.125　right : 0.9　bottom : 0.1　top : 0.9　wspace : 0.2　hspace : 0.2
+    fig.subplots_adjust(top=0.95, bottom=0.15, left=0.15)
+
+    # plt.annotate('burst',xy=(86400/2,30),size=20)
+
+    tmp=[[447, 447.33],
+         [4047, 4048.02],
+         [7644, 7645.2],
+         [ 11292, 11293.32],
+         [14846, 14846.33],
+         [ 18456, 18456.33],
+         [ 22045, 22046.12 ],
+         [ 25644, 25644.33 ],
+         [ 29248, 29249.06 ],
+         [ 32847, 32847.33 ],
+         [ 36441, 36442.31 ],
+         [ 40049, 40049.33 ],
+         [ 43650, 43650.33 ],
+         [ 47247, 47249.07],
+         [ 50845, 50845.33 ],
+         [ 54450, 54450.33 ],
+         [ 58046, 58046.33 ],
+         [ 61645, 61646.07 ],
+         [ 65247, 65248.03 ],
+         [ 68845, 68845.33 ],
+         [ 72445, 72446.17 ],
+         [ 76045, 76045.33 ],
+         [ 79650, 79650.33 ],
+         [ 81436, 81489],
+         [ 83243, 83244.16]]
+
+
+    for st,en in tmp:
+        plt.plot([st,st], [0,max(y)*1.05], "--", color='red', alpha=0.3)
+        # plt.plot([en,en], [0,max(y)*1.05], "--", color='orange', alpha=0.3)
+
+    # plt.fill([43502,47107,47107,43502], [0,0,80,80], color='orange', alpha=0.5)
+
+    ax = fig.add_subplot(111)
+    plt.plot(x, y, lw=3)
+    plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2) for i in range(25)],rotation=90,fontsize='20')
+    plt.yticks(fontsize='25')
+
+    plt.xlabel('time', fontsize='23')
+    ax.xaxis.set_label_coords(0.5, -0.13)
+    ax.set_ylabel('Cumulative Count', fontsize='23')
+    ax.yaxis.set_label_coords(-0.15, 0.5)
+    # plt.ylabel('Cumulative Count', fontsize='20', x=-50000)
+
+    plt.xlim(0,86400)
+    plt.ylim(0,max(y)*1.05)
+    plt.grid()
+    plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.eps')
+
 
 
 if __name__ == '__main__':
@@ -125,6 +217,12 @@ if __name__ == '__main__':
         print('usage \n python plot_day.py xxxx.dump 20120101')
         exit()
 
-    DUMP_NAME = sys.argv[1]
-    DATE = sys.argv[2]
-    plot_day(DUMP_NAME, DATE)
+    if len(sys.argv) == 4 and sys.argv[-1] == 'p':
+        # for paper fig plot
+        DUMP_NAME = sys.argv[1]
+        DATE = sys.argv[2]
+        plot_day_fp(DUMP_NAME, DATE)
+    else:
+        DUMP_NAME = sys.argv[1]
+        DATE = sys.argv[2]
+        plot_day(DUMP_NAME, DATE)
