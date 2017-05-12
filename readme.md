@@ -44,7 +44,7 @@
 
 ## host\_pandas.py
     arg: [dir-prefix]
-    hostごとにテンプレートID別集計DataFrame生成
+    hostごとにテンプレートID別発生件数の集計DataFrame生成
 
 ## show\_start\_end\_date.py
     arg: hoge.dump
