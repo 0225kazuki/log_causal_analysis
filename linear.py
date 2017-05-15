@@ -10,6 +10,7 @@ import datetime
 import collections
 import glob
 
+# 誤差が高いほど周期関係ない
 def linear_rms(event, ev_day):
     day = ev_day
     ev_year = int(day[:4])
@@ -22,6 +23,10 @@ def linear_rms(event, ev_day):
     ev_data_coll = collections.Counter(ev_data)
 
     x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(ev_data))]
+
+    if len(x) < 10:
+        return 1
+
     y = [0]
     for row in sorted(ev_data_coll.items(),key=lambda z:z[0]):
         y.append(row[1]+y[-1])
@@ -40,7 +45,7 @@ def linear_rms(event, ev_day):
     return sum([ abs(a-b) for a,b in zip(liny,y) ]) / len(liny) / len(ev_data)
 
 def get_dump_path(ev_name):
-    pf = 'dumps_nofilter/'
+    pf = './'
     temp_id = int(ev_name.split('_')[0])
     if temp_id < 500:
         return pf + '0000-0499/' + ev_name + '.dump'
@@ -59,7 +64,7 @@ if __name__ == "__main__":
         print(linear_rms(event, ev_day))
 
     else:
-        burst_df =sb.open_dump(sys.argv[1])
+        burst_df = sb.open_dump(sys.argv[1])
         for i in burst_df.iteritems():
             tmp = i[1].dropna()
             if len(tmp) != 0 :
@@ -68,5 +73,5 @@ if __name__ == "__main__":
                 event = sb.open_dump(dump_name)
                 for ev_day in tmp.index:
                     rms = linear_rms(event, ev_day.strftime('%Y%m%d'))
-                    if rms > 0.1:
+                    if not rms > 0.1:
                         print(ev_day,'\t',rms)

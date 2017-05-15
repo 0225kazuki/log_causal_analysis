@@ -10,9 +10,8 @@ import matplotlib.pyplot as plt
 
 
 '''
-
-dict = {event:value}
-value = {date : time}
+バースト結果をdfにする
+prefix/*-*/*.dump.txt
 
 '''
 
