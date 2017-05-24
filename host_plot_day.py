@@ -119,7 +119,7 @@ if __name__ == "__main__":
         get_dates = [sys.argv[2]]
         prefix = sys.argv[3]
 
-    if sys.argv[-1] == 'fp':
+    if sys.argv[-1] == 'p':
         for_paper_plot = 1
     else:
         for_paper_plot = 0
@@ -175,15 +175,20 @@ if __name__ == "__main__":
             #     4676, 7227, 25, 0.59]
             #  [1.0, 63856, 68989,
 
-            sts = [4676,7227,63856,68989]; burst_cnt = 0
-            for st in sts:
-                color=['red','orange']
-                if burst_cnt < 2:
-                    plt.plot([st,st], [0,max(y)*1.05], "--", color=color[burst_cnt%2], lw=3., label=['Burst\nstart','Burst\nend'][burst_cnt%2])
-                    burst_cnt +=1
-                else:
-                    plt.plot([st,st], [0,max(y)*1.05], "--", color=color[burst_cnt%2], lw=3.)
-                    burst_cnt +=1
+            # tmp=[[1860,20545],]
+            tmp=[[43200,48326],[79468,81482]]
+            for st,en in tmp:
+                plt.fill([st,en,en,st], [0,0,max(y)*1.5,max(y)*1.5], color='#DBDBDB', alpha=0.8)
+
+            # sts = [4676,7227,63856,68989]; burst_cnt = 0
+            # for st in sts:
+            #     color=['red','orange']
+            #     if burst_cnt < 2:
+            #         plt.plot([st,st], [0,max(y)*1.05], "--", color=color[burst_cnt%2], lw=3., label=['Burst\nstart','Burst\nend'][burst_cnt%2])
+            #         burst_cnt +=1
+            #     else:
+            #         plt.plot([st,st], [0,max(y)*1.05], "--", color=color[burst_cnt%2], lw=3.)
+            #         burst_cnt +=1
             plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2) for i in range(25)],rotation=90,fontsize='20')
             plt.xlim(0,86400)
             plt.yticks(fontsize='25')
@@ -192,6 +197,7 @@ if __name__ == "__main__":
             ax.xaxis.set_label_coords(0.5, -0.13)
             ax.set_ylabel('Cumulative Count', fontsize='23')
             ax.yaxis.set_label_coords(-0.15, 0.5)
+            plt.ylim(0,max(y)*1.05)
             # plt.ylabel('Cumulative Count', fontsize='20', x=-50000)
 
             plt.grid()
