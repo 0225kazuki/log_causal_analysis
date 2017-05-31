@@ -1,3 +1,5 @@
+## for new data (since June)
+
 ## burst\_detect\_all.py
     arg: hoge.dump
     1日ごとのバースト検知結果を表示
