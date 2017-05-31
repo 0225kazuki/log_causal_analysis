@@ -47,12 +47,12 @@ def search_burst(burst_df):
         for cur_event, cur_values in day_series.iteritems():
             rel_event = []
             for cur in cur_values:
-                cur_st = cur[0]
+                cur_st = cur[1]
                 for tar_event, tar_values in day_series.iteritems():
                     if tar_event == cur_event:
                         continue
                     for tar in tar_values:
-                        tar_st = tar[0]
+                        tar_st = tar[1]
                         if cur_st - 60 < tar_st < cur_st + 60:
                             rel_event.append(tar_event)
                             break # cur_event1つにつき関連eventは重複して数えない

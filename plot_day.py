@@ -21,7 +21,7 @@ import os.path
 
 def get_dump_path(DUMP_NAME, DATE):
     path = 'dumps/'+DATE+'/'+DUMP_NAME
-    if os.path.exitsts(path):
+    if os.path.exists(path):
         return path
     else:
         print('file not exist')
@@ -37,8 +37,8 @@ def plot_day(DUMP_NAME, DATE):
 
     plot_date = datetime.date(plot_year,plot_month,plot_day)
 
-    # plot_data = [row for row in obj if row.date() == plot_date]
-    # print(len(plot_data))
+    plot_data = [row for row in obj if row.date() == plot_date]
+    print(plot_data)
     # plot_data = [row.time() for row in obj if row.date() == plot_date]
     plot_data = [row.time() for row in obj]
     plot_data_coll = collections.Counter(plot_data)

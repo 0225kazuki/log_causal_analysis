@@ -230,14 +230,20 @@ if __name__ == '__main__':
                 continue
 
             dt_day = datetime.datetime.strptime(day,"%Y%m%d")
-            time_list = np.array([x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()])
+            time_list = [x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()]
 
-            cur_t = time_list[0]
-            for i, t in enumerate(time_list[1:]):
+            cur_t = -1
+            for i, t in enumerate(time_list):
                 if cur_t == t:
                     time_list[i] = round(time_list[i-1]+0.01, 3)
                 else:
                     cur_t = t
+            # cur_t = time_list[0]
+            # for i, t in enumerate(time_list[1:]):
+            #     if cur_t == t:
+            #         time_list[i] = round(time_list[i-1]+0.01, 3)
+            #     else:
+            #         cur_t = t
 
             time_lists = {day:time_list}
 
