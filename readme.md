@@ -1,8 +1,14 @@
 ## for new data (since June)
+    旧データで用いたものはmar-mayブランチ
 
 ## burst\_detect\_all.py
     arg: hoge.dump
     1日ごとのバースト検知結果を表示
+    イベントごとのdumpを受付   
+
+## burst\_detect\_all\_for\_calc.py
+    arg: hoge.dump
+    1日ごとのバースト検知結果を表示，時間計測用
     イベントごとのdumpを受付   
 
 ## pybursts.py

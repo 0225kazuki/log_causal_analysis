@@ -23,7 +23,6 @@ def print_full(x):
 
 
 def open_dump(dump_file):
-    # type: (string) -> object
     with open(dump_file, "rb") as f:
         obj = pickle.load(f, encoding="bytes")
     return obj
@@ -60,6 +59,7 @@ def search_burst(burst_df):
             if co_burst_results[cur_event] == 0:
                 co_burst_results[cur_event] = collections.Counter(rel_event)
             else:
+                print('ck')
                 co_burst_results[cur_event] += collections.Counter(rel_event)
 
     return co_burst_results

@@ -16,11 +16,20 @@ import pybursts
 import datetime
 import matplotlib.dates as mdates
 import pickle
+import search_burst as sb
+import os.path
+
+def get_dump_path(DUMP_NAME, DATE):
+    path = 'dumps/'+DATE+'/'+DUMP_NAME
+    if os.path.exitsts(path):
+        return path
+    else:
+        print('file not exist')
+        exit()
 
 def plot_day(DUMP_NAME, DATE):
 
-    with open(DUMP_NAME,"rb") as f:
-        obj = pickle.load(f, encoding="bytes")
+    obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -28,9 +37,10 @@ def plot_day(DUMP_NAME, DATE):
 
     plot_date = datetime.date(plot_year,plot_month,plot_day)
 
-    plot_data = [row for row in obj if row.date() == plot_date]
-    print(len(plot_data))
-    plot_data = [row.time() for row in obj if row.date() == plot_date]
+    # plot_data = [row for row in obj if row.date() == plot_date]
+    # print(len(plot_data))
+    # plot_data = [row.time() for row in obj if row.date() == plot_date]
+    plot_data = [row.time() for row in obj]
     plot_data_coll = collections.Counter(plot_data)
 
     x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
@@ -40,28 +50,7 @@ def plot_day(DUMP_NAME, DATE):
         y.append(row[1]+y[-1])
     y = y[1:]
 
-    # 移動平均
-    # y_cnt = [(a,b) for a,b in zip(x,y)]
-    #
-    # time_window = 10 * 60 #sec
-    #
-    # sma = []
-    # for i in range(int(86400/time_window)):
-    #     # sma.append(sum([z[1] for z in y_cnt if time_window * i < z[0] < time_window * (i + 1)])/time_window*60)
-    #     sma_tmp = [z[1] for z in y_cnt if time_window * i < z[0] < time_window * (i + 1)]
-    #     if len(sma_tmp) != 0:
-    #         sma.append(sum(sma_tmp)/len(sma_tmp))
-    #     else:
-    #         sma.append(0)
-    #
-    # sma_x = [i*time_window for i in range(int(86400/time_window))]
-
-
-    '''
-    階段状にする処理
-    x = [0,1,2,3,...] -> x = [0,1,1,2,2,3,3,...]
-    y = [a,b,c,d,...] -> y = [a,a,b,b,c,c,d,d,...]
-    '''
+    # 階段状にする処理
     x = np.sort(np.append(x,x))[1:]
     x = np.insert(x,0,x[0])
 
@@ -72,7 +61,6 @@ def plot_day(DUMP_NAME, DATE):
 
     y = tmp[:-1]
     y = [0] + y
-
 
     # plot
     fig = plt.figure(figsize=(30,10))
@@ -90,8 +78,7 @@ def plot_day(DUMP_NAME, DATE):
 
 def plot_day_fp(DUMP_NAME, DATE):
 
-    with open(DUMP_NAME,"rb") as f:
-        obj = pickle.load(f, encoding="bytes")
+    obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -129,51 +116,6 @@ def plot_day_fp(DUMP_NAME, DATE):
     #default left : 0.125　right : 0.9　bottom : 0.1　top : 0.9　wspace : 0.2　hspace : 0.2
     fig.subplots_adjust(top=0.95, bottom=0.15, left=0.15)
 
-    # plt.annotate('burst',xy=(86400/2,30),size=20)
-
-    # 10_hakata-dc-rm 20121120
-    # tmp=[[447, 447.33],
-    #      [4047, 4048.02],
-    #      [7644, 7645.2],
-    #      [ 11292, 11293.32],
-    #      [14846, 14846.33],
-    #      [ 18456, 18456.33],
-    #      [ 22045, 22046.12 ],
-    #      [ 25644, 25644.33 ],
-    #      [ 29248, 29249.06 ],
-    #      [ 32847, 32847.33 ],
-    #      [ 36441, 36442.31 ],
-    #      [ 40049, 40049.33 ],
-    #      [ 43650, 43650.33 ],
-    #      [ 47247, 47249.07],
-    #      [ 50845, 50845.33 ],
-    #      [ 54450, 54450.33 ],
-    #      [ 58046, 58046.33 ],
-    #      [ 61645, 61646.07 ],
-    #      [ 65247, 65248.03 ],
-    #      [ 68845, 68845.33 ],
-    #      [ 72445, 72446.17 ],
-    #      [ 76045, 76045.33 ],
-    #      [ 79650, 79650.33 ],
-    #      [ 81436, 81489],
-    #      [ 83243, 83244.16]]
-
-    # 15_sin 20130222
-    # tmp = [[306, 43786.01],]
-
-    # 10_wdc 20130316
-    # tmp=[[10522, 10624],
-    #      [11080, 11148],
-    #      [12809, 12853],
-    #      [14302, 14343.01]]
-
-    # 30_tokyo-dc-rm 20120111
-    tmp=[[37838, 39056.03],
-         [39587, 40396.03],
-         [40861, 62153.03]]
-
-    # 7_kote 20120116
-    # tmp=[[43502, 47107]]
     for st,en in tmp:
         # plt.plot([st,st], [0,max(y)*1.05], "--", color='red', alpha=0.3)
         # plt.bar(st, max(y)*1.05)
@@ -199,7 +141,7 @@ def plot_day_fp(DUMP_NAME, DATE):
     plt.grid()
     plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.eps')
 
-def plot_day_comp(DUMP_NAME1,DUMP_NAME2, DATE):
+def plot_day_comp(DUMP_NAME1, DUMP_NAME2, DATE):
 
     # plot
     fig = plt.figure(figsize=(18,10))
@@ -207,53 +149,52 @@ def plot_day_comp(DUMP_NAME1,DUMP_NAME2, DATE):
     fig.subplots_adjust(left=0.03,right=0.999, hspace=0.5)
     plot_cnt = 1
     for DUMP_NAME in [DUMP_NAME1,DUMP_NAME2]:
-        with open(DUMP_NAME,"rb") as f:
-            obj = pickle.load(f, encoding="bytes")
+        obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
 
-            plot_year = int(DATE[:4])
-            plot_month = int(DATE[4:6])
-            plot_day = int(DATE[6:8])
-            plot_date = datetime.date(plot_year,plot_month,plot_day)
+        plot_year = int(DATE[:4])
+        plot_month = int(DATE[4:6])
+        plot_day = int(DATE[6:8])
+        plot_date = datetime.date(plot_year,plot_month,plot_day)
 
-            plot_data = [row.time() for row in obj if row.date() == plot_date]
-            plot_data_coll = collections.Counter(plot_data)
+        plot_data = [row.time() for row in obj if row.date() == plot_date]
+        plot_data_coll = collections.Counter(plot_data)
 
-            x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
+        x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
 
-            y = [0]
-            for row in sorted(plot_data_coll.items(),key=lambda z:z[0]):
-                y.append(row[1]+y[-1])
-            y = y[1:]
+        y = [0]
+        for row in sorted(plot_data_coll.items(),key=lambda z:z[0]):
+            y.append(row[1]+y[-1])
+        y = y[1:]
 
-            x = np.sort(np.append(x,x))[1:]
-            x = np.insert(x,0,x[0])
+        x = np.sort(np.append(x,x))[1:]
+        x = np.insert(x,0,x[0])
 
-            tmp = []
-            for row in y:
-                tmp.append(row)
-                tmp.append(row)
+        tmp = []
+        for row in y:
+            tmp.append(row)
+            tmp.append(row)
 
-            y = tmp[:-1]
-            y = [0] + y
+        y = tmp[:-1]
+        y = [0] + y
 
-            plt.subplot(2,1,plot_cnt)
-            plt.plot(x, y)
-            plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],rotation=90)
+        plt.subplot(2,1,plot_cnt)
+        plt.plot(x, y)
+        plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],rotation=90)
 
-            plt.title(DUMP_NAME.split('/')[-1], fontsize=('20'))
-            plt.xlim(0,86400)
-            plt.grid()
+        plt.title(DUMP_NAME.split('/')[-1], fontsize=('20'))
+        plt.xlim(0,86400)
+        plt.grid()
 
-            plot_cnt += 1
+        plot_cnt += 1
 
     plt.savefig(DUMP_NAME1.split('/')[-1].split('.')[0]+'-'+DUMP_NAME2.split('/')[-1].split('.')[0]+'_'+DATE+'.png')
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print('usage')
-        print('Plot:\t\tpython plot_day.py xxxx.dump 20120101')
-        print('For Paper plot:\tpython plot_day.py xxxx.dump 20120101 p')
-        print('Double plot:\tpython plot_day.py xxxx.dump yyyy.dump 20120101')
+        print('Plot:\t\tpython plot_day.py event 20120101')
+        print('For Paper plot:\tpython plot_day.py event 20120101 p')
+        print('Double plot:\tpython plot_day.py event1 event2 20120101')
         exit()
 
     if len(sys.argv) == 4 and sys.argv[-1] == 'p':

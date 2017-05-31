@@ -3,47 +3,15 @@ import numpy as np
 import pandas as pd
 
 if __name__ == "__main__":
-    with open("all_rplinear",'r') as f:
+    with open("rp_edge_result",'r') as f:
         all_data=[i.strip() for i in f.readlines()]
         event_df = pd.DataFrame(columns=['srcID','srcHost','dstID','dstHost','direction','date'])
         date_df = pd.DataFrame(columns=['edgeID','date'])
         lt_df = pd.DataFrame(columns=['ltid','lt'])
         i = 0
         line = all_data
-        # while i<len(all_data):
-        #     if 'term' in line[i]:
-        #         date = line[i].split()[2]
-        #     if 'directed' in line[i]:
-        #         while i<len(all_data): # directed loop
-        #             i += 1
-        #             if 'undirected' in line[i]:
-        #                 break
-        #             if 'src>' in line[i]:
-        #                 srcID = line[i].split()[2]
-        #                 srcHost = line[i].split()[6][:-1]
-        #                 i += 3
-        #                 dstID = line[i].split()[2]
-        #                 dstHost = line[i].split()[6][:-1]
-        #                 direc = 1
-        #                 event_df = event_df.append(pd.Series([srcID,srcHost,dstID,dstHost,direc,date],index=event_df.columns),ignore_index=True)
-        #
-        #         while i<len(all_data): # undirected loop
-        #             if 'src>' in line[i]:
-        #                 srcID = line[i].split()[2]
-        #                 srcHost = line[i].split()[6][:-1]
-        #                 i += 3
-        #                 dstID = line[i].split()[2]
-        #                 dstHost = line[i].split()[6][:-1]
-        #                 direc = 0
-        #                 event_df = event_df.append(pd.Series([srcID,srcHost,dstID,dstHost,direc,date],index=event_df.columns),ignore_index=True)
-        #             if 'term' in line[i]:
-        #                 break
-        #             i += 1
-        #     i += 1
 
         while i<len(all_data):
-            # print(line[i])
-
             if 'term' in line[i]:
                 date = line[i].split()[2]
             elif 'undirected' in line[i]:
@@ -58,10 +26,6 @@ if __name__ == "__main__":
                 dstHost = line[i].split()[6][:-1]
                 event_df = event_df.append(pd.Series([srcID,srcHost,dstID,dstHost,direc,date],index=event_df.columns),ignore_index=True)
             i+=1
-
-
-        # event_df = event_df.drop_duplicates().sort_values('srcID','srcHost','dstID','dstHost')
-        # event_df = event_df.reset_index(drop=True)
 
         dbname = 's4causality.db'
         conn = sqlite3.connect(dbname)

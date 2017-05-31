@@ -212,17 +212,17 @@ def check_interval(burst_range, group_time_list):
     return burst_range_result
 
 def get_dumpname(day):
-    evs = subprocess.check_output(['ls','dumps/{0}'.format(day)]).decode('utf-8')[:-1].split("\n")
+    evs = subprocess.check_output(['ls','dumps_host/{0}'.format(day)]).decode('utf-8')[:-1].split("\n")
     return evs
 
 if __name__ == '__main__':
 
-    days = subprocess.check_output(['ls','dumps']).decode('utf-8')[:-1].split('\n')
+    days = subprocess.check_output(['ls','dumps_host']).decode('utf-8')[:-1].split('\n')
 
     for day in days:
         print(day)
         for DUMP_NAME in get_dumpname(day):
-            with open('dumps/'+day+'/'+DUMP_NAME, "rb") as f:
+            with open('dumps_host/'+day+'/'+DUMP_NAME, "rb") as f:
                 obj = pickle.load(f, encoding="bytes")
 
             if len(obj) == 0:
@@ -243,7 +243,7 @@ if __name__ == '__main__':
 
             burst_result = m_burst_detect(time_lists, 4)
 
-            with open('burst_result/'+day+'/'+day+'_'+DUMP_NAME,'wb') as g:
+            with open('burst_result_host/'+day+'/'+DUMP_NAME,'wb') as g:
                 if burst_result != []:
                     pickle.dump((DUMP_NAME,burst_result[0][0],burst_result[0][1]), g)
                 else:

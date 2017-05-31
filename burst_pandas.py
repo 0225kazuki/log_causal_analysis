@@ -5,21 +5,16 @@ import glob
 import collections
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-# import host_plot_day
-
+import search_burst as sb
 
 '''
 バースト結果をdfにする
-prefix/*-*/*.dump.txt
-
+burst_result/*/* -> burst_df[index = date, colmuns = events]
 '''
 
-
-
 def burst2get_data(burst_file):
-    # print(burst_file)
-    get_data = collections.defaultdict(lambda: 0)
+    # get_data = collections.defaultdict(lambda: 0)
+    get_data = sb.open_dump('burst_file')
     for line in open(burst_file,"r"):
         if line[0] == '(':
             get_date = "".join([a.strip().zfill(2) for a in line[1:-2].split(",")])
@@ -31,22 +26,31 @@ def burst2get_data(burst_file):
 
     return get_data
 
-def create_burst_dict(pf):
-    files = glob.glob('{0}/*-*/*'.format(pf))
-    columns = [fi.split("/")[-1].split(".dump.txt")[0] for fi in files]
-    burst_df = pd.DataFrame(index=pd.date_range('20120101','20130331'), columns=columns)
-    for fi,col in zip(files,columns):
-        event_name = fi.split('/')[-1].split('.')[0]
-        get_data = burst2get_data(fi)
-        if len(get_data) == 0:
+
+def create_burst_df():
+    files = glob.glob('burst_result/*/*')
+    evs = sorted(list(set(["_".join(fi.split('/')[-1].split("_")[1:]) for fi in files])))
+
+    cols = evs
+
+    burst_df = pd.DataFrame(index=pd.date_range('20120101','20130331'), columns=cols)
+    for fi in files:
+        event_name = "_".join(fi.split('/')[-1].split('_')[1:])
+
+        print(fi)
+
+        try: # some bursts are detected
+            ev,day,data = sb.open_dump(fi)
+        except: # no bursts are detected
+            continue
+
+        if event_name != ev:
+            print('event name error')
+            print(event_name,ev,day,data)
             continue
         else:
-            # burst_dict[event_name] = get_data
-            for d,v in get_data.items():
-                d = pd.to_datetime(d)
-                # print(type(d))
-                burst_df.loc[d,col] = v
-                print(burst_df.loc[d])
+            d = pd.to_datetime(day)
+            burst_df.loc[d,ev] = data
 
     return burst_df
 
@@ -60,13 +64,9 @@ def create_burst_dict(pf):
 #                 event_list
 
 if __name__ == "__main__":
-    PREFIX = sys.argv[1]
-
-
-    burst_df = create_burst_dict(PREFIX)
+    burst_df = create_burst_df()
 
     with open('burst_df','wb') as f:
         pickle.dump(burst_df,f)
-
 
     # search_day(burst_dict)

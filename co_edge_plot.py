@@ -18,8 +18,8 @@ import matplotlib.dates as mdates
 import pickle
 import search_burst as sb
 
-co_prob_df = sb.open_dump('rplinear/rp_co_prob_df')
-co_edge_df = sb.open_dump('rplinear/rp_edge_co_df')
+co_prob_df = sb.open_dump('co_prob_df')
+co_edge_df = sb.open_dump('rp_edge_coburst')
 
 xj = co_prob_df['x']
 yj = co_prob_df['y_jaccard'] * (10 ** 5 )
@@ -67,4 +67,5 @@ for i in [0,1]:
 
     ax.yaxis.set_label_coords(-0.15, 0.5)
     plt.legend(prop={'size':20},loc='lower left')
-    plt.savefig('{0}_edge.eps'.format(kind))
+    plt.savefig('{0}_edge.png'.format(kind))
+    # plt.savefig('{0}_edge.eps'.format(kind))
