@@ -229,10 +229,11 @@ if __name__ == '__main__':
     time_lists = {}
     for day in day_set:
 
-        time_list = np.array([x.hour*3600 + x.minute*60 + x.second
+        time_list = [x.hour*3600 + x.minute*60 + x.second
                      for x in obj
-                     if x.date() == datetime.date(day[0], day[1], day[2])])
+                     if x.date() == datetime.date(day[0], day[1], day[2])]
 
+        print(type(time_list))
         cur_t = time_list[0]
 
         for i, t in enumerate(time_list[1:]):

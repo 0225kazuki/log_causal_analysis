@@ -67,4 +67,5 @@ for i in [0,1]:
 
     ax.yaxis.set_label_coords(-0.15, 0.5)
     plt.legend(prop={'size':20},loc='lower left')
-    plt.savefig('{0}_edge.eps'.format(kind))
+    plt.savefig('{0}_edge.png'.format(kind))
+    #plt.savefig('{0}_edge.eps'.format(kind))
