@@ -49,3 +49,7 @@
 ## show\_start\_end\_date.py
     arg: hoge.dump
     dumpの始点と終点を返す
+
+## ipython\_import.py
+    arg: 
+    ipython用imports
