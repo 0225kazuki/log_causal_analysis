@@ -6,3 +6,4 @@ import matplotlib.pyplot as plt
 import datetime
 import collections
 import pickle
+import plot_day

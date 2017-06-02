@@ -12,7 +12,7 @@ if __name__ == "__main__":
         line = all_data
 
         while i<len(all_data):
-            if 'term' in line[i]:
+            if 'term : ' in line[i]:
                 date = line[i].split()[2]
             elif 'undirected' in line[i]:
                 direc = 0

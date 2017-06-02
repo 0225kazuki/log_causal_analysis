@@ -10,7 +10,7 @@ import search_burst as sb
 import sqlite3
 
 '''
-burst - noburstを探す
+burst - burstを探す
 '''
 
 
@@ -38,48 +38,50 @@ if __name__ == "__main__":
     dbname = 's4causality.db'
     conn  = sqlite3.connect(dbname)
     cur = conn.cursor()
-    cur.execute('''select srcID,srcHost,dstID,dstHost from event''')
-    edge = cur.fetchall()
-    edge = [sorted((str(e[0])+"_"+e[1],str(e[2])+"_"+e[3])) for e in edge]
-    edge = [e[0]+"."+e[1] for e in edge]
-    edge = list(set(edge))
-    edge = [set(e.split(".")) for e in edge]
+    # cur.execute('''select srcID,srcHost,dstID,dstHost from event''')
+    # edge = cur.fetchall()
+    # edge = [sorted((str(e[0])+"_"+e[1],str(e[2])+"_"+e[3])) for e in edge]
+    # edge = [e[0]+"."+e[1] for e in edge]
+    # edge = list(set(edge))
+    # edge = [set(e.split(".")) for e in edge]
 
-    print(len(edge))
+    edge_burst = sb.open_dump('rp_edge_coburst')
 
-    co_burst = sb.open_dump('co_prob_df')
-    co_burst = list(co_burst['EvPair'].values)
-    co_burst = [set(x) for x in co_burst]
+    print(len(edge_burst))
+
+    # co_burst = sb.open_dump('co_prob_df')
+    # co_burst = list(co_burst['EvPair'].values)
+    # co_burst = [set(x) for x in co_burst]
 
     burst = sb.open_dump('burst_df')
     burst_ev = [x for x in burst.columns if len(burst[x].dropna()) != 0]
 
-    burst_noburst = []
-    for ep in edge:
-        if ep not in co_burst:
-            ep = list(ep)
-            if ep[0] in burst_ev:
-                burst_noburst.append(ep)
-            if ep[1] in burst_ev:
-                burst_noburst.append(ep[::-1])
+    # burst_noburst = []
+    # for ep in edge:
+    #     if ep not in co_burst:
+    #         ep = list(ep)
+    #         if ep[0] in burst_ev:
+    #             burst_noburst.append(ep)
+    #         if ep[1] in burst_ev:
+    #             burst_noburst.append(ep[::-1])
 
 
     result = []
-    for evp in burst_noburst:
+    for evp in edge_burst[edge_burst['y_jaccard']>=0.1]['EvPair']:
         bday = burst[evp[0]].dropna().index.values
         bday = [str(x).split('T')[0].replace("-","") for x in bday]
         eday = get_eday(evp)
         if len(set(bday) & set(eday)) != 0:
             anddays = list(set(bday) & set(eday))
-            days = []
-            for andday in anddays:
-                if cnt_logs(evp[1],andday):
-                    days.append(andday)
-                else:
-                    continue
-            result.append((evp,days))
+            # days = []
+            # for andday in anddays:
+            #     if cnt_logs(evp[1],andday):
+            #         days.append(andday)
+            #     else:
+            #         continue
+            result.append((evp,anddays))
 
-    with open('partial_burst','wb') as f:
+    with open('burst_burst','wb') as f:
         pickle.dump(result,f)
 
     conn.close()

@@ -2,9 +2,7 @@
 # coding: UTF-8
 
 '''
-.dumpを読み込んで1日単位でバーストを検知する。
-
-python busrt_detect.py xxx.dump
+python busrt_detect_all.py
 '''
 
 import collections
@@ -20,9 +18,6 @@ from itertools import chain
 import pickle
 import datetime
 import subprocess
-
-
-# DUMP_NAME = sys.argv[1]
 
 '''
 レベルの重複削除
@@ -43,7 +38,6 @@ After
 [[2.0 54134 55689]
  [10.0 55655 55689]]
 '''
-
 
 class Node():
     def __init__(self, parent, st, en, lv, cnt, depth=0):
@@ -192,7 +186,6 @@ def check_interval(burst_range, group_time_list):
         return burst_range
     burst_range_result = []
     sub_list = []
-    # print('check interval', burst_range)
 
     for lv, s, e in burst_range:
         sub_list = [y - x for x, y
@@ -238,12 +231,6 @@ if __name__ == '__main__':
                     time_list[i] = round(time_list[i-1]+0.01, 3)
                 else:
                     cur_t = t
-            # cur_t = time_list[0]
-            # for i, t in enumerate(time_list[1:]):
-            #     if cur_t == t:
-            #         time_list[i] = round(time_list[i-1]+0.01, 3)
-            #     else:
-            #         cur_t = t
 
             time_lists = {day:time_list}
 
@@ -254,10 +241,3 @@ if __name__ == '__main__':
                     pickle.dump((DUMP_NAME,burst_result[0][0],burst_result[0][1]), g)
                 else:
                     pickle.dump((DUMP_NAME,day),g)
-
-
-
-    # for row in burst_result:
-    #     print(row[0])
-    #     for row2 in row[1]:
-    #         print('\t', row2)
