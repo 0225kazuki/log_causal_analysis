@@ -41,9 +41,6 @@ def create_xy(dump_name,get_date):
 
     plot_data_coll = collections.Counter(plot_data)
 
-    # daydata=obj[get_date]
-    # print(datydata)
-    # exit()
     x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
     y = [0]
     for row in sorted(plot_data_coll.items(),key=lambda z:z[0]):
@@ -79,16 +76,21 @@ def open_dump(dump_file):
         obj = pickle.load(f, encoding="bytes")
     return obj
 
-def get_most_ids(df,get_date):
+def get_most_ids(host,get_date):
     #dfから特定日の大量発生しているIDを降順に取得 -> ids
-    id_sr = df.loc[get_date]
-    # id_sr.sort(ascending=False)
-    id_sr = id_sr.sort_values(inplace=False, ascending=False)
-    id_sr = id_sr.dropna()
+    # id_sr = df.loc[get_date]
+    # id_sr = id_sr.sort_values(inplace=False, ascending=False)
+    # id_sr = id_sr.dropna()
+    #
+    # ids = id_sr.index
 
-    ids = id_sr.index
+    ids = []
+    print(get_date)
+    for i in glob.glob('dumps/{0}/*'.format(get_date)):
+        if i.split("_")[-1] == host:
+            ids.append((i.split("/")[-1].split("_")[0],len(open_dump(i))))
 
-    print(id_sr)
+    sorted(ids,key=lambda x:x[1],reverse=True)
     return ids
 
 def burst2get_dates(burst_file):
@@ -103,7 +105,7 @@ def burst2get_dates(burst_file):
     return get_dates
 
 if __name__ == "__main__":
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         print("usage:\npython host_plot_day.py tokyo-dc-rm_df.dump 20120101 prefix")
         print("python host_plot_day.py a tokyo-dc-rm_df.dump burst_result.txt prefix")
         exit()
@@ -115,9 +117,9 @@ if __name__ == "__main__":
 
         get_dates = burst2get_dates(burst_file)
     else:
-        dump_name = sys.argv[1]
+        host = sys.argv[1]
         get_dates = [sys.argv[2]]
-        prefix = sys.argv[3]
+        # prefix = sys.argv[3]
 
     if sys.argv[-1] == 'p':
         for_paper_plot = 1
@@ -126,15 +128,15 @@ if __name__ == "__main__":
 
     colors = ['red','orange','y','lightgreen','green','lightblue','blue','purple','gray','black']
 
-    df = open_dump(dump_name)
-    host_name = dump_name.split("/")[-1].split('_')[0]
+    # df = open_dump(dump_name)
+    # host_name = dump_name.split("/")[-1].split('_')[0]
 
-    print(host_name)
-    print(get_dates)
+    # print(host_name)
+    # print(get_dates)
 
     if for_paper_plot == 1:
         for get_date in get_dates:
-            ids = get_most_ids(df,get_date)
+            ids = get_most_ids(host,get_date)
 
             # データをセット
             fig = plt.figure(figsize=(10,6))
@@ -143,29 +145,20 @@ if __name__ == "__main__":
             fig.subplots_adjust(top=0.95, bottom=0.15, left=0.15,right=0.87)
             ax = fig.add_subplot(111)
 
-            for cnt,idd in enumerate(ids):
-                if cnt > 9:
+            for cnt,(idd,num) in enumerate(ids):
+                if cnt > 4:
                     break
 
-                id_host = str(idd) + '_' + host_name + '.dump'
-
-                if idd < 500:
-                    id_host_path = prefix + "/0000-0499/" + id_host
-                elif idd < 1000:
-                    id_host_path = prefix + "/0500-0999/" + id_host
-                elif idd < 1500:
-                    id_host_path = prefix + "/1000-1499/" + id_host
-                else:
-                    id_host_path = prefix + "/1500-1999/" + id_host
-
-                x,y = create_xy(id_host_path,get_date)
+                # id_host = str(idd) + '_' + host_name + '.dump'
+                print(get_date,idd)
+                x,y = create_xy('dumps/'+get_date+'/'+idd+'_'+host, get_date)
                 print(idd,y[-1])
 
                 plt.plot(x, y,label=cnt+1,color=colors[cnt], lw=1.5)
 
 
             #総計データのプロット
-            x, y = create_xy("host_dump/"+host_name+".dump",get_date)
+            x, y = create_xy("dumps_host/"+get_date+'/'+get_date+'_'+host,get_date)
             plt.plot(x, y, "-.", label='all', color="black", lw=1.5)
 
 
@@ -175,8 +168,8 @@ if __name__ == "__main__":
             #     4676, 7227, 25, 0.59]
             #  [1.0, 63856, 68989,
 
-            # tmp=[[1860,20545],]
-            tmp=[[43200,48326],[79468,81482]]
+            tmp=[[1860,20545],]
+            # tmp=[[43200,48326],[79468,81482]]
             for st,en in tmp:
                 plt.fill([st,en,en,st], [0,0,max(y)*1.5,max(y)*1.5], color='#DBDBDB', alpha=0.8)
 
@@ -204,23 +197,7 @@ if __name__ == "__main__":
             plt.legend(prop={'size':13},bbox_to_anchor=(1.01, 1), loc='upper left', borderaxespad=0)
 
             # plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.png')
-            plt.savefig(host_name + get_date + '_fp.eps')
-
-            # ax = fig.add_subplot(111)
-            # plt.plot(x, y, lw=3)
-            # plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2) for i in range(25)],rotation=90,fontsize='20')
-            # plt.yticks(fontsize='25')
-            #
-            # plt.xlabel('time', fontsize='23')
-            # ax.xaxis.set_label_coords(0.5, -0.13)
-            # ax.set_ylabel('Cumulative Count', fontsize='23')
-            # ax.yaxis.set_label_coords(-0.15, 0.5)
-            # # plt.ylabel('Cumulative Count', fontsize='20', x=-50000)
-            #
-            # plt.xlim(0,86400)
-            # plt.ylim(0,max(y)*1.05)
-            # plt.grid()
-            # plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.eps')
+            plt.savefig(host + get_date + '_fp.eps')
 
 
     else:
