@@ -8,12 +8,10 @@ import plot_day
 import pickle
 import search_burst as sb
 import sqlite3
+import collections
 
 '''
-burst - burstを探す
-edge-coburstのevpairに対して，
-ev1とev2共にバーストが起きている日(共起かは見ていない) & エッジが引かれた日
-を出している。
+相似形のものかどうか判別
 '''
 
 def cnt_logs(DUMP_NAME,DATE):
@@ -32,6 +30,39 @@ def get_eday(evp):
     for i in r:
         result.append("".join(i[0].split("-")))
     return result
+
+
+def get_log(DUMP_NAME,DATE):
+    obj = sb.open_dump('dumps/'+str(DATE)+'/'+DUMP_NAME)
+    return(obj)
+
+
+def check_synm(evp,anddays):
+    res1 = []
+    res2 = []
+    for day in anddays:
+        ev1 = get_log(evp[0],day)
+        lev1 = len(ev1)
+        ev2 = get_log(evp[1],day)
+        lev2 = len(ev2)
+
+        ev1 = collections.Counter([i.strftime('%H%M') for i in ev1])
+        # lev1 = ev1.most_common(1)[0][1]
+        ev2 = collections.Counter([i.strftime('%H%M') for i in ev2])
+        # lev2 = ev2.most_common(1)[0][1]
+
+        ev1s = {k:int(v/lev1*100) for k,v in ev1.items()}
+        ev2s = {k:int(v/lev2*100) for k,v in ev2.items()}
+        # print(ev1s);exit()
+        if evp[0] == '117_tokyo-dc-rm' and evp[1] == '116_tokyo-dc-rm':
+            print(ev1,ev2)
+            print(ev1s,ev2s)
+
+        res1.append(ev1==ev2)
+        res2.append(ev1s==ev2s)
+
+    return any(res1),any(res2)
+
 
 if __name__ == "__main__":
 
@@ -56,11 +87,15 @@ if __name__ == "__main__":
         eday = get_eday(evp)
         if len(set(bday) & set(eday)) != 0:
             anddays = list(set(bday) & set(eday))
+            res1,res2 = check_synm(evp,anddays)
+            result.append((evp,anddays,res1,res2))
 
-            result.append((evp,anddays))
+    # print(result)
 
-    with open('burst_burst_all','wb') as f:
+
+    with open('burst_burst_synm_min','wb') as f:
         pickle.dump(result,f)
+
 
     conn.close()
     exit()

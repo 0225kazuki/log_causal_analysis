@@ -6,7 +6,7 @@ import collections
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+# import search_burst as sb
 
 '''
 特定の日の、ID別プロット
@@ -85,10 +85,9 @@ def get_most_ids(host,get_date):
     # ids = id_sr.index
 
     ids = []
-    print(get_date)
-    for i in glob.glob('dumps/{0}/*'.format(get_date)):
-        if i.split("_")[-1] == host:
-            ids.append((i.split("/")[-1].split("_")[0],len(open_dump(i))))
+    for i in glob.glob('dumps/{0}/*_{1}'.format(get_date,host)):
+        # if i.split("_")[-1] == host:
+        ids.append((i.split("/")[-1].split("_")[0],len(open_dump(i))))
 
     sorted(ids,key=lambda x:x[1],reverse=True)
     return ids
@@ -161,17 +160,10 @@ if __name__ == "__main__":
             x, y = create_xy("dumps_host/"+get_date+'/'+get_date+'_'+host,get_date)
             plt.plot(x, y, "-.", label='all', color="black", lw=1.5)
 
-
-            # [1.0, 43200, 48326, 125, 1.46]
-            #          [1.0, 79468, 81482, 16, 0.48]
-
-            #     4676, 7227, 25, 0.59]
-            #  [1.0, 63856, 68989,
-
-            tmp=[[1860,20545],]
+            # tmp=[[1860,20545],]
             # tmp=[[43200,48326],[79468,81482]]
-            for st,en in tmp:
-                plt.fill([st,en,en,st], [0,0,max(y)*1.5,max(y)*1.5], color='#DBDBDB', alpha=0.8)
+            # for st,en in tmp:
+            #     plt.fill([st,en,en,st], [0,0,max(y)*1.5,max(y)*1.5], color='#DBDBDB', alpha=0.8)
 
             # sts = [4676,7227,63856,68989]; burst_cnt = 0
             # for st in sts:
@@ -182,6 +174,7 @@ if __name__ == "__main__":
             #     else:
             #         plt.plot([st,st], [0,max(y)*1.05], "--", color=color[burst_cnt%2], lw=3.)
             #         burst_cnt +=1
+
             plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2) for i in range(25)],rotation=90,fontsize='20')
             plt.xlim(0,86400)
             plt.yticks(fontsize='25')

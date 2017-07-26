@@ -16,8 +16,13 @@ import pybursts
 import datetime
 import matplotlib.dates as mdates
 import pickle
-import search_burst as sb
+# import search_burst as sb
 import os.path
+
+def open_dump(dump_file):
+    with open(dump_file, "rb") as f:
+        obj = pickle.load(f, encoding="bytes")
+    return obj
 
 def get_dump_path(DUMP_NAME, DATE):
     path = 'dumps/'+DATE+'/'+DUMP_NAME
@@ -29,7 +34,7 @@ def get_dump_path(DUMP_NAME, DATE):
 
 def plot_day(DUMP_NAME, DATE):
 
-    obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
+    obj = open_dump(get_dump_path(DUMP_NAME,DATE))
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -38,7 +43,7 @@ def plot_day(DUMP_NAME, DATE):
     plot_date = datetime.date(plot_year,plot_month,plot_day)
 
     plot_data = [row for row in obj if row.date() == plot_date]
-    print(plot_data)
+    # print(plot_data)
     # plot_data = [row.time() for row in obj if row.date() == plot_date]
     plot_data = [row.time() for row in obj]
     plot_data_coll = collections.Counter(plot_data)
@@ -67,17 +72,20 @@ def plot_day(DUMP_NAME, DATE):
     #default left : 0.125　right : 0.9　bottom : 0.1　top : 0.9　wspace : 0.2　hspace : 0.2
     fig.subplots_adjust(left=0.03,right=0.999)
 
+    plt.title(DUMP_NAME+"\t"+DATE)
+
     plt.plot(x, y)
-    plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],rotation=90)
+    plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],fontsize=25,rotation=90)
 
     plt.xlim(0,86400)
-    plt.grid()
+    # plt.grid()
 
-    plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.png')
+    # plt.savefig(DUMP_NAME.split('/')[-1].split('.')[0]+'_'+DATE+'.png')
+    plt.show()
 
 def plot_day_old(DUMP_NAME, DATE):
 
-    obj = sb.open_dump(DUMP_NAME)
+    obj = open_dump(DUMP_NAME)
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -139,12 +147,7 @@ def plot_day_old(DUMP_NAME, DATE):
 
 def plot_day_fp(DUMP_NAME, DATE):
 
-    obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
-
-    # for old dump
-    # obj = sb.open_dump(DUMP_NAME)
-    # c_date = datetime.datetime.strptime(DATE, '%Y%m%d').date()
-    # obj = [x for x in obj if x.date() == c_date]
+    obj = open_dump(get_dump_path(DUMP_NAME,DATE))
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -154,7 +157,7 @@ def plot_day_fp(DUMP_NAME, DATE):
     plot_data = [row for row in obj if row.date() == plot_date]
 
     plot_data = [row.time() for row in obj if row.date() == plot_date]
-    # print(plot_data[0:50])
+
     plot_data_coll = collections.Counter(plot_data)
 
     x = [row.hour*3600 + row.minute*60 + row.second for row in sorted(set(plot_data))]
@@ -190,6 +193,9 @@ def plot_day_fp(DUMP_NAME, DATE):
         # plt.fill([st,en,en,st], [0,0,max(y)*1.05,max(y)*1.05], color='#505050', alpha=0.1)
 
     ax = fig.add_subplot(111)
+
+    plt.title(DUMP_NAME+"\t"+DATE)
+
     plt.plot(x, y, lw=3)
     plt.xticks([i*3600 for i in range(25)][::2],[str(i).zfill(2) for i in range(25)][::2],rotation=90,fontsize='20')
     # plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2) for i in range(25)],rotation=90,fontsize='20')
@@ -217,7 +223,7 @@ def plot_day_comp(DUMP_NAME1, DUMP_NAME2, DATE):
     fig.subplots_adjust(left=0.03,right=0.999, hspace=0.5)
     plot_cnt = 1
     for DUMP_NAME in [DUMP_NAME1,DUMP_NAME2]:
-        obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
+        obj = open_dump(get_dump_path(DUMP_NAME,DATE))
 
         plot_year = int(DATE[:4])
         plot_month = int(DATE[4:6])
@@ -274,7 +280,7 @@ def plot_day_comp_fp(DUMP_NAME1, DUMP_NAME2, DATE, DIRECTION):
     fig.subplots_adjust(left=0.08,right=0.99, hspace=0.5, bottom=0.13, top=0.95)
     plot_cnt = 1
     for DUMP_NAME in [DUMP_NAME1,DUMP_NAME2]:
-        obj = sb.open_dump(get_dump_path(DUMP_NAME,DATE))
+        obj = open_dump(get_dump_path(DUMP_NAME,DATE))
 
         plot_year = int(DATE[:4])
         plot_month = int(DATE[4:6])

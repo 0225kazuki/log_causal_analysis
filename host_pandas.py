@@ -10,13 +10,11 @@ import numpy as np
 '''
 hostの全集計dfのdump生成
 
-python host_pandas.py prefix
-
-* prefix/0000-0499
+python host_pandas.py
 
 '''
 
-PREFIX = sys.argv[1]
+# PREFIX = sys.argv[1]
 
 def print_full(x):
     pd.set_option('display.max_rows', len(x))
