@@ -102,7 +102,7 @@ def burst_detect(time_lists):
 
 
             # print(time_list)
-            
+
             # バースト検知
             burst_list = pybursts.kleinberg(sorted(time_list),
                                             s=2, gamma=1.0)
@@ -224,8 +224,7 @@ if __name__ == '__main__':
 
     for day in days:
         # print(day)
-        if day != '20120605':
-            continue
+
         for DUMP_NAME in get_dumpname(day):
             with open('dumps_host/'+day+'/'+DUMP_NAME, "rb") as f:
                 obj = pickle.load(f, encoding="bytes")
