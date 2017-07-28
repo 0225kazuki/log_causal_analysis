@@ -100,8 +100,11 @@ def burst_detect(time_lists):
             # if time_list[0] != 0:
             #     time_list.insert(0, 0)
 
+
+            # print(time_list)
+            
             # バースト検知
-            burst_list = pybursts.kleinberg(sorted(set(time_list)),
+            burst_list = pybursts.kleinberg(sorted(time_list),
                                             s=2, gamma=1.0)
 
             # ここで重複レベルを削除
@@ -220,7 +223,9 @@ if __name__ == '__main__':
     days = subprocess.check_output(['ls','dumps_host']).decode('utf-8')[:-1].split('\n')
 
     for day in days:
-        print(day)
+        # print(day)
+        if day != '20120605':
+            continue
         for DUMP_NAME in get_dumpname(day):
             with open('dumps_host/'+day+'/'+DUMP_NAME, "rb") as f:
                 obj = pickle.load(f, encoding="bytes")
@@ -230,7 +235,7 @@ if __name__ == '__main__':
                 continue
 
             dt_day = datetime.datetime.strptime(day,"%Y%m%d")
-            time_list = np.array([x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()])
+            time_list = sorted([x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()])
 
             cur_t = time_list[0]
             for i, t in enumerate(time_list[1:]):

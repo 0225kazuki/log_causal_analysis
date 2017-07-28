@@ -223,7 +223,7 @@ if __name__ == '__main__':
                 continue
 
             dt_day = datetime.datetime.strptime(day,"%Y%m%d")
-            time_list = [x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()]
+            time_list = sorted([x.hour*3600 + x.minute*60 + x.second for x in obj if x.date() == dt_day.date()])
 
             cur_t = -1
             for i, t in enumerate(time_list):

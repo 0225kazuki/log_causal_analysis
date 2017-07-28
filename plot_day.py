@@ -34,7 +34,10 @@ def get_dump_path(DUMP_NAME, DATE):
 
 def plot_day(DUMP_NAME, DATE):
 
-    obj = open_dump(get_dump_path(DUMP_NAME,DATE))
+    if "/" in DUMP_NAME:
+        obj = open_dump(DUMP_NAME)
+    else:
+        obj =   open_dump(get_dump_path(DUMP_NAME,DATE))
 
     plot_year = int(DATE[:4])
     plot_month = int(DATE[4:6])
@@ -76,6 +79,7 @@ def plot_day(DUMP_NAME, DATE):
 
     plt.plot(x, y)
     plt.xticks([i*3600 for i in range(25)],[str(i).zfill(2)+':00\n{0}'.format(i*3600) for i in range(25)],fontsize=25,rotation=90)
+    plt.yticks(fontsize=25)
 
     plt.xlim(0,86400)
     # plt.grid()

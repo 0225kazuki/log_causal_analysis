@@ -60,6 +60,9 @@ def vect(ev):
         y.append(row[1]+y[-1])
     y = y[1:]
 
+    x = np.array(x)
+    y = np.array(y)/np.max(y)
+
     return np.array([x,y])
 
 
@@ -77,11 +80,12 @@ def check_synm(evp,anddays):
         if evp[0] == '117_tokyo-dc-rm' and evp[1] == '116_tokyo-dc-rm':
             print(ev1,ev2)
 
-        dtw = dtw_distance(vev1.T, vev2.T, lambda x,y: np.linalg.norm(x/86400.-np.log(y/max(y))) )
+        dtw = dtw_distance(vev1.T, vev2.T, lambda x,y: np.linalg.norm(x-y))
         # dtw = dtw_distance(vev1[0],vev2[0])
         res.append((evp,day,dtw))
 
     return res
+
 
 if __name__ == "__main__":
     dbname = 's4causality.db'
